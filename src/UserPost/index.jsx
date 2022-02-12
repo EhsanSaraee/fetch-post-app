@@ -1,10 +1,20 @@
 import { Button, Input, Space } from 'antd';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getPost } from '../Redux/Features/postSlice';
 
 const Home = () => {
    const [id, setId] = useState();
-   const fetchUserPost = () => {};
+   const dispatch = useDispatch();
+   const { posts, loading } = useSelector((state) => state.posts);
+   const fetchUserPost = () => {
+      if (!id) {
+         window.alert('Please provide an ID');
+      } else {
+         dispatch(getPost({ id }));
+      }
+   };
    const navigate = useNavigate();
 
    return (
