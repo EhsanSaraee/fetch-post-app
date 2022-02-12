@@ -9,7 +9,6 @@ const Home = () => {
    const [id, setId] = useState();
    const dispatch = useDispatch();
    const { posts, loading } = useSelector((state) => state.posts);
-   console.log(posts);
    const navigate = useNavigate();
 
    const fetchUserPost = () => {
