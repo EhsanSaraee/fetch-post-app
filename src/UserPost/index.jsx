@@ -1,21 +1,25 @@
-import { Button, Input, Space } from 'antd';
+import { Button, Card, Input, Space } from 'antd';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getPost } from '../Redux/Features/postSlice';
+import LoadingCard from './LoadingCard';
 
 const Home = () => {
    const [id, setId] = useState();
    const dispatch = useDispatch();
    const { posts, loading } = useSelector((state) => state.posts);
+   console.log(posts);
+   const navigate = useNavigate();
+
    const fetchUserPost = () => {
       if (!id) {
          window.alert('Please provide an ID');
       } else {
          dispatch(getPost({ id }));
+         setId('');
       }
    };
-   const navigate = useNavigate();
 
    return (
       <div className="container">
@@ -37,6 +41,41 @@ const Home = () => {
                Create User Post
             </Button>
          </Space>
+         <br />
+         <br />
+         {loading ? (
+            <LoadingCard count={1} />
+         ) : (
+            <>
+               <div className="site-card-border-less-wrapper">
+                  <Card type="inner" title={posts[0]?.data?.title}>
+                     <p>User ID : {posts[0]?.data?.id}</p>
+                     <span>{posts[0]?.data?.body}</span>
+                  </Card>
+                  {posts.length > 0 && (
+                     <Space
+                        size="middle"
+                        style={{
+                           marginTop: '35px',
+                           marginLeft: '5px',
+                           float: 'right',
+                        }}
+                     >
+                        <Button
+                           style={{ cursor: 'pointer' }}
+                           type="primary"
+                           danger
+                        >
+                           Delete
+                        </Button>
+                        <Button style={{ cursor: 'pointer' }} type="primary">
+                           Edit
+                        </Button>
+                     </Space>
+                  )}
+               </div>
+            </>
+         )}
       </div>
    );
 };
