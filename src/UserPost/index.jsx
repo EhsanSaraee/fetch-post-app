@@ -2,7 +2,7 @@ import { Button, Card, Input, Space } from 'antd';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getPost } from '../Redux/Features/postSlice';
+import { deletePost, getPost } from '../Redux/Features/postSlice';
 import LoadingCard from './LoadingCard';
 
 const Home = () => {
@@ -65,6 +65,7 @@ const Home = () => {
                            style={{ cursor: 'pointer' }}
                            type="primary"
                            danger
+                           onClick={() => deletePost({ id: posts[0].id })}
                         >
                            Delete
                         </Button>
