@@ -1,8 +1,18 @@
+import './App.css';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import CreatePost from './UserPost/CreatePost';
+import Home from './UserPost';
+
 const App = () => {
    return (
-      <>
-         <h1>fetch post app</h1>
-      </>
+      <BrowserRouter>
+         <div className="App">
+            <Routes>
+               <Route path="/" element={<Home />} />
+               <Route path="/createPost" element={<CreatePost />} />
+            </Routes>
+         </div>
+      </BrowserRouter>
    );
 };
 
