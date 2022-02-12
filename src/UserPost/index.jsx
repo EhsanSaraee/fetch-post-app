@@ -1,15 +1,27 @@
 import { Button, Card, Input, Space } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deletePost, getPost } from '../Redux/Features/postSlice';
+import {
+   deletePost,
+   getPost,
+   setEdit,
+   updatePost,
+} from '../Redux/Features/postSlice';
 import LoadingCard from './LoadingCard';
 
 const Home = () => {
    const [id, setId] = useState();
+   const [bodyText, setBodyText] = useState('');
    const dispatch = useDispatch();
-   const { posts, loading } = useSelector((state) => state.posts);
+   const { posts, loading, edit, body } = useSelector((state) => state.posts);
    const navigate = useNavigate();
+
+   useEffect(() => {
+      if (body) {
+         setBodyText(body);
+      }
+   }, [body]);
 
    const fetchUserPost = () => {
       if (!id) {
@@ -49,9 +61,50 @@ const Home = () => {
                <div className="site-card-border-less-wrapper">
                   <Card type="inner" title={posts[0]?.data?.title}>
                      <p>User ID : {posts[0]?.data?.id}</p>
-                     <span>{posts[0]?.data?.body}</span>
+                     {edit ? (
+                        <>
+                           <Input.TextArea
+                              rows={4}
+                              value={bodyText}
+                              onChange={(event) =>
+                                 setBodyText(event.target.value)
+                              }
+                           />
+                           <Space
+                              size="middle"
+                              style={{ marginTop: '5px', marginLeft: '5px' }}
+                           >
+                              <Button
+                                 type="primary"
+                                 onClick={() => {
+                                    dispatch(
+                                       updatePost({
+                                          id: posts[0].data.id,
+                                          title: posts[0].data.title,
+                                          body: bodyText,
+                                       })
+                                    );
+                                    dispatch(
+                                       setEdit({ edit: false, body: '' })
+                                    );
+                                 }}
+                              >
+                                 Save
+                              </Button>
+                              <Button
+                                 onClick={() =>
+                                    dispatch(setEdit({ edit: false, body: '' }))
+                                 }
+                              >
+                                 Cancel
+                              </Button>
+                           </Space>
+                        </>
+                     ) : (
+                        <span>{posts[0]?.data?.body}</span>
+                     )}
                   </Card>
-                  {posts.length > 0 && (
+                  {posts.length > 0 && !edit && (
                      <Space
                         size="middle"
                         style={{
@@ -64,11 +117,24 @@ const Home = () => {
                            style={{ cursor: 'pointer' }}
                            type="primary"
                            danger
-                           onClick={() => deletePost({ id: posts[0].id })}
+                           onClick={() =>
+                              dispatch(deletePost({ id: posts[0]?.data?.id }))
+                           }
                         >
                            Delete
                         </Button>
-                        <Button style={{ cursor: 'pointer' }} type="primary">
+                        <Button
+                           style={{ cursor: 'pointer' }}
+                           type="primary"
+                           onClick={() =>
+                              dispatch(
+                                 setEdit({
+                                    edit: true,
+                                    body: posts[0]?.data?.body,
+                                 })
+                              )
+                           }
+                        >
                            Edit
                         </Button>
                      </Space>
